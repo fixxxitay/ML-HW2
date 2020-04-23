@@ -50,17 +50,19 @@ def main():
 
     # Save the raw data first
     df_train = df.iloc[0:6000, :]
-    df_test = df.iloc[6001:8001, :]
-    df_validation = df.iloc[8001:10001, :]
+    df_test = df.iloc[6000:8000, :]
+    df_validation = df.iloc[8000:10000, :]
     df_train.to_csv('raw_train.csv', index=False)
     df_test.to_csv('raw_test.csv', index=False)
     df_validation.to_csv('raw_validation.csv', index=False)
     
     # Convert nominal types to numerical categories
+    # from nominal to Categorical
     df = df.apply(lambda x:  pandas.Categorical(x) if x.dtype != 'float64' else x, axis=0)
+    # give number to each Categorical
     df = df.apply(lambda x: x.cat.codes if x.dtype != 'float64' else x, axis=0)
 
-    # 1 - Imputation
+    # 1 - Imputation - Complete missing values
     
     # Fill missing values with the most common value per column
     df.loc[:, nominal_features] = df.apply(lambda x: x.fillna(x.mode()[0]), axis=0)

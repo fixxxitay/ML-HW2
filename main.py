@@ -1,4 +1,4 @@
-﻿import pandas
+﻿import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from scipy import stats
@@ -45,20 +45,53 @@ nominal_features = ['Age_group',
                     'Financial_agenda_matters'
                    ]
 
+
+def train_test_split(x, test_size, validation_size):
+    """
+    :param x: features
+    :param y: labels
+    :param test_size: test set size in percentage (0 < test_size < 1)
+    :param validation_size: validation set size in percentage (0 < validation_size < 1)
+    :return X_train, X_test, y_train, y_test
+    """
+    n_samples = x.shape[0]
+    num_train = int((1 - test_size - validation_size) * n_samples)
+    num_test = int(test_size * n_samples)
+    rand_gen = np.random.RandomState()
+
+    x_train = []
+    x_test = []
+    x_validation = []
+
+    indexes = rand_gen.permutation(n_samples)
+
+    for i in range(n_samples):
+        if i < num_train:
+            x_train.append(x.iloc[indexes[i]])
+        elif ((i >= num_train) & (i < num_train + num_test)):
+            x_test.append(x.iloc[indexes[i]])
+        else:
+            x_validation.append(x.iloc[indexes[i]])
+    return pd.DataFrame.from_records(x_train), pd.DataFrame.from_records(x_test), pd.DataFrame.from_records(
+        x_validation)
+
+
+
+
 def main():
-    df = pandas.read_csv("ElectionsData.csv")
+    df = pd.read_csv("ElectionsData.csv")
+
+    # split the data to train , test and validation
+    df_train, df_test, df_validation = train_test_split(df, 0.2, 0.2)
 
     # Save the raw data first
-    df_train = df.iloc[0:6000, :]
-    df_test = df.iloc[6000:8000, :]
-    df_validation = df.iloc[8000:10000, :]
     df_train.to_csv('raw_train.csv', index=False)
     df_test.to_csv('raw_test.csv', index=False)
     df_validation.to_csv('raw_validation.csv', index=False)
     
     # Convert nominal types to numerical categories
     # from nominal to Categorical
-    df = df.apply(lambda x:  pandas.Categorical(x) if x.dtype != 'float64' else x, axis=0)
+    df = df.apply(lambda x:  pd.Categorical(x) if x.dtype != 'float64' else x, axis=0)
     # give number to each Categorical
     df = df.apply(lambda x: x.cat.codes if x.dtype != 'float64' else x, axis=0)
 

@@ -46,7 +46,7 @@ nominal_features = ['Age_group',
                    ]
 
 
-def train_test_split(x, test_size, validation_size):
+def train_test_validation_split(x, test_size, validation_size):
     """
     :param x: features
     :param y: labels
@@ -68,7 +68,7 @@ def train_test_split(x, test_size, validation_size):
     for i in range(n_samples):
         if i < num_train:
             x_train.append(x.iloc[indexes[i]])
-        elif ((i >= num_train) & (i < num_train + num_test)):
+        elif (i >= num_train) & (i < num_train + num_test):
             x_test.append(x.iloc[indexes[i]])
         else:
             x_validation.append(x.iloc[indexes[i]])
@@ -82,7 +82,7 @@ def main():
     df = pd.read_csv("ElectionsData.csv")
 
     # split the data to train , test and validation
-    df_train, df_test, df_validation = train_test_split(df, 0.2, 0.2)
+    df_train, df_test, df_validation = train_test_validation_split(df, 0.2, 0.2)
 
     # Save the raw data first
     df_train.to_csv('raw_train.csv', index=False)

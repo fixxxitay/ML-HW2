@@ -2,6 +2,15 @@
 import numpy as np
 from sklearn.model_selection import train_test_split
 from scipy import stats
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+
+from sklearn.linear_model import Ridge
+
+from sklearn.feature_selection import VarianceThreshold
 
 integer_features = ['Occupation_Satisfaction', 
                     'Yearly_IncomeK',
@@ -96,7 +105,7 @@ def main():
     df = df.apply(lambda x: x.cat.codes if x.dtype != 'float64' else x, axis=0)
 
     # 1 - Imputation - Complete missing values
-    
+    df = df[df > 0]
     # Fill missing values with the most common value per column
     df.loc[:, nominal_features] = df.apply(lambda x: x.fillna(x.mode()[0]), axis=0)
     
@@ -106,11 +115,14 @@ def main():
     # Fill by mean
     df.loc[:, float_features] = df.apply(lambda x: x.fillna(x.mean()), axis=0)
 
+    df = df.dropna()
 
     # 2 - Data Cleansing
     # Outlier detection using z score
-    z = np.abs(stats.zscore(df))
-    df = df[(z < 3).all(axis=1)]
+
+   # z = np.abs(stats.zscore(df))
+   # df = df[(z < 3).all(axis=1)]
+
 
     # Remove lines with wrong party (Violets | Khakis)
     df = df[df.Vote != 10]
@@ -122,11 +134,28 @@ def main():
 
     # 4 - Feature Selection
 
+    # The filter method : correlation factor between features
+    # Remove the highly correlated ones
+
+    correlated_features = set()
+    correlation_matrix = df.corr()
+    for i in range(len(correlation_matrix.columns)):
+        for j in range(i):
+            if abs(correlation_matrix.iloc[i, j]) > 0.8:
+                colname = correlation_matrix.columns[i]
+                correlated_features.add(colname)
+
+    print(len(correlated_features))
+    print(correlated_features)
+  
+    df.drop(labels=correlated_features, axis=1, inplace=True)
+ 
+
 
     # Save the transformed data
     df_train = df.iloc[0:round(len(df)*0.6), :]
-    df_test = df.iloc[round(len(df)*0.6)+1:round(len(df)*0.8)+1, :]
-    df_validation = df.iloc[round(len(df)*0.8)+1:len(df)+1, :]
+    df_test = df.iloc[round(len(df)*0.6):round(len(df)*0.8), :]
+    df_validation = df.iloc[round(len(df)*0.8):len(df), :]
 
     df_train.to_csv('train.csv', index=False)
     df_test.to_csv('test.csv', index=False)

@@ -17,8 +17,7 @@ integer_features = ['Occupation_Satisfaction',
                     'Last_school_grades',
                     'Number_of_differnt_parties_voted_for',
                     'Number_of_valued_Kneset_members',
-                    'Num_of_kids_born_last_10_years'
-                    ]
+                    'Num_of_kids_born_last_10_years']
 float_features = ['Avg_monthly_expense_when_under_age_21', 
                   'Avg_lottary_expanses',
                   'Avg_monthly_expense_on_pets_or_plants',
@@ -39,9 +38,7 @@ float_features = ['Avg_monthly_expense_when_under_age_21',
                   '%_satisfaction_financial_policy',
                   'Avg_monthly_income_all_years',
                   'Political_interest_Total_Score',
-                  'Overall_happiness_score'
-
-                  ]
+                  'Overall_happiness_score']
 nominal_features = ['Age_group',
                     'Looking_at_poles_results',
                     'Married',
@@ -51,8 +48,7 @@ nominal_features = ['Age_group',
                     'Most_Important_Issue',
                     'Main_transportation',
                     'Occupation',
-                    'Financial_agenda_matters'
-                   ]
+                    'Financial_agenda_matters']
 
 
 def train_test_validation_split(x, test_size, validation_size):
@@ -81,10 +77,18 @@ def train_test_validation_split(x, test_size, validation_size):
             x_test.append(x.iloc[indexes[i]])
         else:
             x_validation.append(x.iloc[indexes[i]])
-    return pd.DataFrame.from_records(x_train), pd.DataFrame.from_records(x_test), pd.DataFrame.from_records(
-        x_validation)
+    return pd.DataFrame.from_records(x_train), pd.DataFrame.from_records(x_test), pd.DataFrame.from_records(x_validation)
 
 
+def saveFiles(df):
+    # Save the transformed data
+    df_train = df.iloc[0:round(len(df) * 0.6), :]
+    df_test = df.iloc[round(len(df) * 0.6):round(len(df) * 0.8), :]
+    df_validation = df.iloc[round(len(df) * 0.8):len(df), :]
+
+    df_train.to_csv('train.csv', index=False)
+    df_test.to_csv('test.csv', index=False)
+    df_validation.to_csv('validation.csv', index=False)
 
 
 def main():
@@ -115,18 +119,17 @@ def main():
     # Fill by mean
     df.loc[:, float_features] = df.apply(lambda x: x.fillna(x.mean()), axis=0)
 
-    df = df.dropna()
+    # Remove lines with wrong party (Violets | Khakis)
+    df = df[df.Vote != 10]
+    df = df[df.Vote != 4]
 
+    df = df.dropna()
+    
     # 2 - Data Cleansing
     # Outlier detection using z score
 
    # z = np.abs(stats.zscore(df))
    # df = df[(z < 3).all(axis=1)]
-
-
-    # Remove lines with wrong party (Violets | Khakis)
-    df = df[df.Vote != 10]
-    df = df[df.Vote != 4]
 
 
     # 3 - Normalization (scaling)
@@ -136,7 +139,6 @@ def main():
 
     # The filter method : correlation factor between features
     # Remove the highly correlated ones
-
     correlated_features = set()
     correlation_matrix = df.corr()
     for i in range(len(correlation_matrix.columns)):
@@ -144,23 +146,26 @@ def main():
             if abs(correlation_matrix.iloc[i, j]) > 0.8:
                 colname = correlation_matrix.columns[i]
                 correlated_features.add(colname)
-
-    print(len(correlated_features))
-    print(correlated_features)
   
     df.drop(labels=correlated_features, axis=1, inplace=True)
  
 
+    # Wrapper method :
+    model = LogisticRegression()
+    rfe = RFE(model, 16)
+    fit = rfe.fit(df.values[:, 1:], df.values[:, 0])
+    #print("Num Features: %s" % (fit.n_features_))
+    #print("Selected Features: %s" % (fit.support_))
+    #print("Feature Ranking: %s" % (fit.ranking_))
+    
+    arrayBool = np.array([True], dtype=bool)
+    arrayBool = np.append(arrayBool, fit.support_)
+    df = df.iloc[:, arrayBool]
 
-    # Save the transformed data
-    df_train = df.iloc[0:round(len(df)*0.6), :]
-    df_test = df.iloc[round(len(df)*0.6):round(len(df)*0.8), :]
-    df_validation = df.iloc[round(len(df)*0.8):len(df), :]
+    print(df.columns.values)
 
-    df_train.to_csv('train.csv', index=False)
-    df_test.to_csv('test.csv', index=False)
-    df_validation.to_csv('validation.csv', index=False)
 
+    saveFiles(df)
     
 
 

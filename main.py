@@ -12,6 +12,8 @@ from sklearn.linear_model import Ridge
 
 from sklearn.feature_selection import VarianceThreshold
 
+import features
+
 integer_features = ['Occupation_Satisfaction', 
                     'Yearly_IncomeK',
                     'Last_school_grades',
@@ -90,6 +92,36 @@ def saveFiles(df):
     df_test.to_csv('test.csv', index=False)
     df_validation.to_csv('validation.csv', index=False)
 
+def applyFilter(df):
+    # The filter method : correlation factor between features
+    # Remove the highly correlated ones
+    correlated_features = set()
+    correlation_matrix = df.corr()
+    for i in range(len(correlation_matrix.columns)):
+        for j in range(i):
+            if abs(correlation_matrix.iloc[i, j]) > 0.8:
+                colname = correlation_matrix.columns[i]
+                correlated_features.add(colname)
+  
+    df.drop(labels=correlated_features, axis=1, inplace=True)
+
+    return df
+ 
+def applyWrapper(df):
+    # Wrapper method :
+    model = LogisticRegression()
+    rfe = RFE(model, 16)
+    fit = rfe.fit(df.values[:, 1:], df.values[:, 0])
+    #print("Num Features: %s" % (fit.n_features_))
+    #print("Selected Features: %s" % (fit.support_))
+    #print("Feature Ranking: %s" % (fit.ranking_))
+    
+    arrayBool = np.array([True], dtype=bool)
+    arrayBool = np.append(arrayBool, fit.support_)
+    df = df.iloc[:, arrayBool]
+
+    return df
+
 
 def main():
     df = pd.read_csv("ElectionsData.csv")
@@ -135,34 +167,15 @@ def main():
     # 3 - Normalization (scaling)
 
 
-    # 4 - Feature Selection
-
-    # The filter method : correlation factor between features
-    # Remove the highly correlated ones
-    correlated_features = set()
-    correlation_matrix = df.corr()
-    for i in range(len(correlation_matrix.columns)):
-        for j in range(i):
-            if abs(correlation_matrix.iloc[i, j]) > 0.8:
-                colname = correlation_matrix.columns[i]
-                correlated_features.add(colname)
-  
-    df.drop(labels=correlated_features, axis=1, inplace=True)
- 
-
-    # Wrapper method :
-    model = LogisticRegression()
-    rfe = RFE(model, 16)
-    fit = rfe.fit(df.values[:, 1:], df.values[:, 0])
-    #print("Num Features: %s" % (fit.n_features_))
-    #print("Selected Features: %s" % (fit.support_))
-    #print("Feature Ranking: %s" % (fit.ranking_))
-    
-    arrayBool = np.array([True], dtype=bool)
-    arrayBool = np.append(arrayBool, fit.support_)
-    df = df.iloc[:, arrayBool]
+    ## 4 - Feature Selection
+    df = applyFilter(df)
+    df = applyWrapper(df)
 
     print(df.columns.values)
+
+    print(features.relief(df, 1, 2000))
+    print(features.sfs(df))
+
 
 
     saveFiles(df)

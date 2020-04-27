@@ -1,8 +1,4 @@
 # Perceptron
-from scipy.sparse import csr_matrix
-import numpy as np
-
-
 class MlabPerceptron:
     "This class implements a Perceptron Classifier"
 

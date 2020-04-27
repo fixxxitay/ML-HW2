@@ -1,73 +1,40 @@
-﻿import pandas as pd
-import numpy as np
-import sklearn
+integer_features = ['Occupation_Satisfaction',
+                    'Yearly_IncomeK',
+                    'Last_school_grades',
+                    'Number_of_differnt_parties_voted_for',
+                    'Number_of_valued_Kneset_members',
+                    'Num_of_kids_born_last_10_years']
 
-def relief(df: pd.DataFrame, thresh: float, nbIterations: int):
-    X, Y = df.values[:, 1:], df.values[:, 0]
-    X = sklearn.preprocessing.MinMaxScaler().fit_transform(X)
+float_features = ['Avg_monthly_expense_when_under_age_21',
+                  'Avg_lottary_expanses',
+                  'Avg_monthly_expense_on_pets_or_plants',
+                  'Avg_environmental_importance',
+                  'Financial_balance_score_(0-1)',
+                  '%Of_Household_Income',
+                  'Avg_size_per_room',
+                  'Garden_sqr_meter_per_person_in_residancy_area',
+                  'Avg_Residancy_Altitude',
+                  'Yearly_ExpensesK',
+                  '%Time_invested_in_work',
+                  'Avg_education_importance',
+                  'Avg_Satisfaction_with_previous_vote',
+                  'Avg_monthly_household_cost',
+                  'Phone_minutes_10_years',
+                  'Avg_government_satisfaction',
+                  'Weighted_education_rank',
+                  '%_satisfaction_financial_policy',
+                  'Avg_monthly_income_all_years',
+                  'Political_interest_Total_Score',
+                  'Overall_happiness_score']
 
-    W = np.zeros(X.shape[1])
-
-    for i in range(nbIterations):
-        index = np.random.randint(low=0, high=X.shape[0])
-        Xi = X[index, :]
-        Yi = Y[index]
-
-        hitGroup = X[Y == Yi, :]
-        missGroup = X[Y != Yi,:]
-
-        
-        idHit = (hitGroup - Xi).sum(axis=0).argmin(axis=0)
-        idMiss = (missGroup - Xi).sum(axis=0).argmin(axis=0)
-
-        nearHit = hitGroup[idHit, :]
-        nearMiss = missGroup[idMiss, :]
-
-        W = W - ((Xi - nearHit) ** 2) + ((Xi - nearMiss) ** 2)
-
-
-    ret = np.zeros(X.shape[1])
-    ret[W > thresh] = 1
-    
-    return ret
-
-
-def getScore(X, Y):
-    knnModel = sklearn.neighbors.KNeighborsClassifier()
-    
-    return sklearn.model_selection.cross_val_score(knnModel, X, Y, scoring='accuracy').mean()
-
-
-def sfs(df: pd.DataFrame):
-    X, Y = df.iloc[:, 1:], df.iloc[:, 0]
-    globalBestScore = np.NINF
-    selectedFeatures = list()
-    remainingFeatures = list(X.columns)
-    
-
-    for i in range(len(X.columns)):
-        bestScore = np.NINF
-        bestFeature = None
-        for feature in remainingFeatures:
-            score = getScore(X[selectedFeatures + [feature]], Y)
-
-            if score > bestScore:
-                bestScore = score
-                bestFeature = feature
-
-        if bestScore > globalBestScore:
-            globalBestScore = bestScore
-            selectedFeatures.append(bestFeature)
-            remainingFeatures.remove(bestFeature)
-
-        else: 
-            break
-
-    ret = np.zeros(X.shape[1])
-
-    for i in range(len(ret)):
-        if X.columns[i] in selectedFeatures:
-            ret[i] = 1
-
-    return ret
+nominal_features = ['Age_group',
+                    'Looking_at_poles_results',
+                    'Married',
+                    'Gender',
+                    'Voting_Time',
+                    'Will_vote_only_large_party',
+                    'Most_Important_Issue',
+                    'Main_transportation',
+                    'Occupation',
+                    'Financial_agenda_matters']
 

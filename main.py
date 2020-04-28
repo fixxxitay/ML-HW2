@@ -2,7 +2,6 @@
 import numpy as np
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
-
 from exploreData import explore_data
 from features import nominal_features, integer_features, float_features
 
@@ -36,7 +35,7 @@ def train_test_validation_split(x, test_size, validation_size):
     return pd.DataFrame.from_records(x_train), pd.DataFrame.from_records(x_test), pd.DataFrame.from_records(x_validation)
 
 
-def save_files(df):
+def save_files(df: pd.DataFrame):
     # Save the transformed data
     df_train = df.iloc[0:round(len(df) * 0.6), :]
     df_test = df.iloc[round(len(df) * 0.6):round(len(df) * 0.8), :]
@@ -47,7 +46,7 @@ def save_files(df):
     df_validation.to_csv('validation.csv', index=False)
 
 
-def applyFilter(df):
+def apply_filter(df: pd.DataFrame):
     # The filter method : correlation factor between features
     # Remove the highly correlated ones
     correlated_features = set()
@@ -63,7 +62,7 @@ def applyFilter(df):
     return df
 
 
-def applyWrapper(df):
+def apply_wrapper(df: pd.DataFrame):
     # Wrapper method :
     model = LogisticRegression()
     rfe = RFE(model, 16)
@@ -79,21 +78,7 @@ def applyWrapper(df):
     return df
 
 
-def feature_selection(df):
-    # The filter method : correlation factor between features
-    # Remove the highly correlated ones
-    correlated_features = set()
-    correlation_matrix = df.corr()
-    for i in range(len(correlation_matrix.columns)):
-        for j in range(i):
-            if abs(correlation_matrix.iloc[i, j]) > 0.8:
-                col_name = correlation_matrix.columns[i]
-                correlated_features.add(col_name)
-    df.drop(labels=correlated_features, axis=1, inplace=True)
-    # print(df.columns.values)
-
-
-def remove_wrong_party(df):
+def remove_wrong_party(df: pd.DataFrame):
     df = df[df.Vote != 10]
     df = df[df.Vote != 4]
     df = df.dropna()
@@ -106,7 +91,7 @@ def save_raw_data(df_test, df_train, df_validation):
     df_validation.to_csv('raw_validation.csv', index=False)
 
 
-def complete_missing_values(df):
+def complete_missing_values(df: pd.DataFrame):
     df = df[df > 0]
     # Fill missing values with the most common value per column
     df.loc[:, nominal_features] = df.apply(lambda x: x.fillna(x.mode()[0]), axis=0)
@@ -117,7 +102,7 @@ def complete_missing_values(df):
     return df
 
 
-def nominal_to_numerical_categories(df):
+def nominal_to_numerical_categories(df: pd.DataFrame):
     # from nominal to Categorical
     df = df.apply(lambda x: pd.Categorical(x) if x.dtype != 'float64' else x, axis=0)
     # give number to each Categorical
@@ -128,40 +113,44 @@ def nominal_to_numerical_categories(df):
 def main():
     df = pd.read_csv("ElectionsData.csv")
 
-    # split the data to train , test and validation
-    df_train, df_test, df_validation = train_test_validation_split(df, 0.2, 0.2)
+    print(df.isnull().sum())
 
-    # Save the raw data first
-    save_raw_data(df_test, df_train, df_validation)
-
-    # Convert nominal types to numerical categories
-    df = nominal_to_numerical_categories(df)
-
-    # 1 - Imputation - Complete missing values
-    df = complete_missing_values(df)
-
-    # Remove lines with wrong party (Violets | Khakis)
-    df = remove_wrong_party(df)
-
-    # 2 - Data Cleansing
-    # Outlier detection using z score
-
-    # z = np.abs(stats.zscore(df))
-    # df = df[(z < 3).all(axis=1)]
-
-    # 3 - Normalization (scaling)
-
-    # print some graph about the data
-    explore_data(df)
-
-    # 4 - Feature Selection
-    df = applyFilter(df)
-    df = applyWrapper(df)
-
-    print(df.columns.values)
-
-    # save files
-    save_files(df)
+    # # split the data to train , test and validation
+    # df_train, df_test, df_validation = train_test_validation_split(df, 0.2, 0.2)
+    #
+    # # Save the raw data first
+    # save_raw_data(df_test, df_train, df_validation)
+    #
+    # # Convert nominal types to numerical categories
+    # df = nominal_to_numerical_categories(df)
+    #
+    # # 1 - Imputation - Complete missing values
+    # df = complete_missing_values(df)
+    #
+    # # Remove lines with wrong party (Violets | Khakis)
+    # df = remove_wrong_party(df)
+    #
+    # # 2 - Data Cleansing
+    # # Outlier detection using z score
+    #
+    # # z = np.abs(stats.zscore(df))
+    # # df = df[(z < 3).all(axis=1)]
+    #
+    # # 3 - Normalization (scaling)
+    #
+    # # print some graph about the data
+    # explore_data(df)
+    #
+    # # 4 - Feature Selection
+    # df = apply_filter(df)
+    # df = apply_wrapper(df)
+    #
+    # print(df.columns.values)
+    #
+    #
+    #
+    # # save files
+    # save_files(df)
 
     # check accuracy with algorithms
     # check_accuracy_with_algorithms(df)

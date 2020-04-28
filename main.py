@@ -104,6 +104,7 @@ def complete_missing_values(df_train: pd.DataFrame, df_test: pd.DataFrame, df_va
 
     for col in df_train.columns.values:
         if col == 'Vote':
+            df_train[col].fillna(df_train[col].mode()[0], inplace=True)
             continue
 
         filler = None
@@ -132,9 +133,9 @@ def nominal_to_numerical_categories(df):
 def apply_feature_selection(df_train, df_test, df_validation, featureSet):
     arrayBool = np.array([True], dtype=bool)
     arrayBool = np.append(arrayBool, featureSet)
-    df_train = df_train.iloc[:, arrayBool]
-    df_test = df_test.iloc[:, arrayBool]
-    df_validation = df_validation.iloc[:, arrayBool]
+    df_train = df_train.iloc[:, arrayBool==True]
+    df_test = df_test.iloc[:, arrayBool==True]
+    df_validation = df_validation.iloc[:, arrayBool==True]
     
     return df_train, df_test, df_validation
 
@@ -179,13 +180,13 @@ def main():
     #print("Score for Relief: ")
     #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
 
-    #featureSet = featureSelection.sfs(dtrain)
-    #df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    #print("Score for SFS: ")
-    #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
+    featureSet = featureSelection.sfs(df_train)
+    df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
+    print("Score for SFS: ")
+    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
 
     
-    save_files(df_train, df_test, df_validation)
+    #save_files(df_train, df_test, df_validation)
 
     # check accuracy with algorithms
     exploreData.check_accuracy_with_algorithms(df_test)

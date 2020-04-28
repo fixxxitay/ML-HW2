@@ -2,7 +2,6 @@
 import numpy as np
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
-
 from exploreData import explore_data
 from features import nominal_features, integer_features, float_features
 import featureSelection
@@ -41,14 +40,17 @@ def deterministicSplit(df, train, test):
     df_test = df.iloc[round(len(df) * train):round(len(df) * (train+test)), :]
     df_validation = df.iloc[round(len(df) * (train+test)):len(df), :]
 
+
     return df_train, df_test, df_validation
+
 
 def save_files(df_train, df_test, df_validation):
     df_train.to_csv('train.csv', index=False)
     df_test.to_csv('test.csv', index=False)
     df_validation.to_csv('validation.csv', index=False)
 
-def get_filter_selection(df_train):
+
+def get_filter_selection(df_train: pd.DataFrame):
     # The filter method : correlation factor between features
     # Remove the highly correlated ones
     correlated_features = set()
@@ -66,7 +68,8 @@ def get_filter_selection(df_train):
 
     return ret
 
-def get_wrapper_selection(df_train):
+
+def get_wrapper_selection(df_train: pd.DataFrame):
     # Wrapper method :
     model = LogisticRegression()
     rfe = RFE(model, 16)
@@ -123,7 +126,7 @@ def complete_missing_values(df_train: pd.DataFrame, df_test: pd.DataFrame, df_va
     
     return df_train, df_test, df_validation
 
-def nominal_to_numerical_categories(df):
+def nominal_to_numerical_categories(df: pd.DataFrame):
     # from nominal to Categorical
     df = df.apply(lambda x: pd.Categorical(x) if x.dtype != 'float64' else x, axis=0)
     # give number to each Categorical
@@ -142,6 +145,7 @@ def apply_feature_selection(df_train, df_test, df_validation, featureSet):
 
 def main():
     df = pd.read_csv("ElectionsData.csv")
+
 
     # Convert nominal types to numerical categories
     df = nominal_to_numerical_categories(df)

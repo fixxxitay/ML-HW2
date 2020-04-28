@@ -13,7 +13,7 @@ def calc_err(y_pred, y_true):
     return error
 
 
-def train_labels_validation_labels(df):
+def train_labels_validation_labels(df: pd.DataFrame):
     df_train = df.iloc[0:round(len(df) * 0.6), :]
     df_validation = df.iloc[round(len(df) * 0.8):len(df), :]
     train_without_label = df_train.values[:, 1:]
@@ -23,7 +23,7 @@ def train_labels_validation_labels(df):
     return train_labels, train_without_label, validation_labels, validation_without_label
 
 
-def evaluate_classifier(clf, df, num_repeats=10):
+def evaluate_classifier(clf, df: pd.DataFrame, num_repeats=10):
     current_errors = np.zeros(num_repeats)
     train_labels, train_without_label, validation_labels, validation_without_label = train_labels_validation_labels(df)
     for i_rep in tqdm(range(num_repeats)):
@@ -49,7 +49,7 @@ def print_summary_knn_l1_l2_cosine(cos_error, cos_error_std, l1_error, l1_error_
     print(summary_df)
 
 
-def knn_l1_l2_cosine(df):
+def knn_l1_l2_cosine(df: pd.DataFrame):
     k = 5
     clf2 = KNeighborsClassifier(n_neighbors=k, p=2)
     l2_error, l2_error_std = evaluate_classifier(clf2, df)
@@ -75,7 +75,7 @@ def print_knn_k_graph(k_errors, k_errors_std, k_s):
     plt.show()
 
 
-def check_best_k_for_knn(df):
+def check_best_k_for_knn(df: pd.DataFrame):
     k_s = [1, 3, 5, 7, 15, 20, 25]  # num neighbors
     # using distances:
     # Cosine Distance - metric='cosine' [KNeighborsClassifier(n_neighbors=K, metric='cosine')]
@@ -90,7 +90,7 @@ def check_best_k_for_knn(df):
     print_knn_k_graph(k_errors, k_errors_std, k_s)
 
 
-def check_perceptron(df):
+def check_perceptron(df: pd.DataFrame):
     data_without_label = df.values[:, 1:]
     data_labels = df.values[:, 0]
     clf = Perceptron(tol=1e-3, random_state=0)
@@ -99,7 +99,7 @@ def check_perceptron(df):
     print("\nclassification error for Perceptron: {} ({}%)".format(error_mean, error_mean * 100))
 
 
-def check_accuracy_with_algorithms(df):
+def check_accuracy_with_algorithms(df: pd.DataFrame):
     # GaussianNB()
     error_mean, error_std = evaluate_classifier(GaussianNB(), df)
     print("\nclassification error for GaussianNB: {} ({}%)".format(error_mean, error_mean * 100))

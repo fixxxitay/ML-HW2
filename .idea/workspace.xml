@@ -2,17 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cf7c9986-6055-4973-90de-d16ab6d67242" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/ML-HW2.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/featureSelection.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/%Time_invested_in_work.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/%_satisfaction_financial_policy.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_Residancy_Altitude.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_education_importance.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_environmental_importance.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_government_satisfaction.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_lottary_expanses.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_monthly_expense_on_pets_or_plants.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_monthly_expense_when_under_age_21.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_monthly_household_cost.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_monthly_income_all_years.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Avg_size_per_room.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Garden_sqr_meter_per_person_in_residancy_area.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Occupation.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Occupation_Satisfaction.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Overall_happiness_score.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Phone_minutes_10_years.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Political_interest_Total_Score.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Weighted_education_rank.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Yearly_ExpensesK.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/graphs/Yearly_IncomeK.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exploreData.py" beforeDir="false" afterPath="$PROJECT_DIR$/exploreData.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/features.py" beforeDir="false" afterPath="$PROJECT_DIR$/features.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw_test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/raw_test.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw_train.csv" beforeDir="false" afterPath="$PROJECT_DIR$/raw_train.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/raw_validation.csv" beforeDir="false" afterPath="$PROJECT_DIR$/raw_validation.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/test.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.csv" beforeDir="false" afterPath="$PROJECT_DIR$/train.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/validation.csv" beforeDir="false" afterPath="$PROJECT_DIR$/validation.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,16 +40,16 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ML_HW2$main.coverage" NAME="main Coverage Results" MODIFIED="1588003847139" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ML_HW2$main.coverage" NAME="main Coverage Results" MODIFIED="1588069345262" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/hw_2_git$main.coverage" NAME="main Coverage Results" MODIFIED="1587659063516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3402">
-              <caret line="126" selection-start-line="126" selection-end-line="126" />
+            <state relative-caret-position="618">
+              <caret line="196" lean-forward="true" selection-start-line="196" selection-end-line="196" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -41,8 +60,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/exploreData.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="10" column="12" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="12" />
+            <state relative-caret-position="524">
+              <caret line="139" column="21" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="21" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -53,17 +72,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/features.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
+            <state relative-caret-position="389">
               <caret line="28" selection-start-line="28" selection-end-line="28" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/featureSelection.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1863">
-              <caret line="69" column="14" selection-start-line="69" selection-start-column="14" selection-end-line="69" selection-end-column="14" />
+            <state relative-caret-position="324">
+              <caret line="12" column="21" lean-forward="true" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -80,6 +99,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>rf</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -88,9 +112,9 @@
       <list>
         <option value="$PROJECT_DIR$/pesptron.py" />
         <option value="$PROJECT_DIR$/Perceptron.py" />
-        <option value="$PROJECT_DIR$/featureSelection.py" />
         <option value="$PROJECT_DIR$/features.py" />
         <option value="$PROJECT_DIR$/exploreData.py" />
+        <option value="$PROJECT_DIR$/featureSelection.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
@@ -182,12 +206,13 @@
       <workItem from="1587715338292" duration="4185000" />
       <workItem from="1587902255275" duration="14000" />
       <workItem from="1587921327263" duration="6491000" />
-      <workItem from="1587971861860" duration="20803000" />
+      <workItem from="1587971861860" duration="21500000" />
+      <workItem from="1588058258460" duration="10674000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37758000" />
+    <option name="totallyTimeSpent" value="49129000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -198,7 +223,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32936078" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.08884074" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.9306609" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -249,10 +274,10 @@
       <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/raw_test.csv">
-      <provider selected="true" editor-type-id="csv-text-editor" />
       <provider editor-type-id="csv-table-editor">
         <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
       </provider>
+      <provider selected="true" editor-type-id="csv-text-editor" />
     </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/pandas/core/indexes/base.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -285,20 +310,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3402">
-          <caret line="126" selection-start-line="126" selection-end-line="126" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/exploreData.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="10" column="12" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="12" />
+        <state relative-caret-position="524">
+          <caret line="139" column="21" selection-start-line="139" selection-start-column="21" selection-end-line="139" selection-end-column="21" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
@@ -307,15 +322,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/features.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
+        <state relative-caret-position="389">
           <caret line="28" selection-start-line="28" selection-end-line="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/featureSelection.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1863">
-          <caret line="69" column="14" selection-start-line="69" selection-start-column="14" selection-end-line="69" selection-end-column="14" />
+        <state relative-caret-position="324">
+          <caret line="12" column="21" lean-forward="true" selection-start-line="12" selection-start-column="21" selection-end-line="12" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="618">
+          <caret line="196" lean-forward="true" selection-start-line="196" selection-end-line="196" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

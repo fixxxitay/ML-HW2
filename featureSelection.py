@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sklearn
+from sklearn.model_selection import ShuffleSplit
 
 
 def relief(df: pd.DataFrame, thresh: float, nbIterations: int):
@@ -33,8 +34,8 @@ def relief(df: pd.DataFrame, thresh: float, nbIterations: int):
 
 def getScore(X, Y):
     knnModel = sklearn.neighbors.KNeighborsClassifier()
-
-    return sklearn.model_selection.cross_val_score(knnModel, X, Y, scoring='accuracy').mean()
+    cv = ShuffleSplit()
+    return sklearn.model_selection.cross_val_score(knnModel, X, Y, scoring='accuracy', cv=cv).mean()
 
 
 def sfs(df: pd.DataFrame):

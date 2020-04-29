@@ -27,6 +27,37 @@ float_features = ['Avg_monthly_expense_when_under_age_21',
                   'Political_interest_Total_Score',
                   'Overall_happiness_score']
 
+
+normal_features = ['Avg_education_importance',
+                   'Avg_environmental_importance',
+                   'Avg_lottary_expanses',
+                   'Avg_monthly_expense_on_pets_or_plants',
+                   'Avg_monthly_expense_when_under_age_21',
+                   'Avg_monthly_household_cost',
+                   'Avg_monthly_income_all_years',
+                   'Avg_Residancy_Altitude',
+                   'Avg_Satisfaction_with_previous_vote',
+                   'Avg_size_per_room',
+                   'Num_of_kids_born_last_10_years',
+                   'Number_of_differnt_parties_voted_for',
+                   'Number_of_valued_Kneset_members',
+                   'Overall_happiness_score',
+                   'Phone_minutes_10_years',
+                   'Political_interest_Total_Score',
+                   'Weighted_education_rank']
+
+
+uniform_features = ['Avg_government_satisfaction',
+                    'Financial_balance_score_(0-1)',
+                    'Garden_sqr_meter_per_person_in_residancy_area',
+                    'Last_school_grades',
+                    'Occupation_Satisfaction',
+                    '%Time_invested_in_work',
+                    '%Of_Household_Income',
+                    '%_satisfaction_financial_policy',
+                    'Yearly_ExpensesK',
+                    'Yearly_IncomeK']
+
 nominal_features = ['Age_group',
                     'Looking_at_poles_results',
                     'Married',

@@ -1,12 +1,16 @@
 ﻿import pandas as pd
 import numpy as np
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+
 from exploreData import explore_data
 from features import nominal_features, integer_features, float_features, uniform_features, normal_features
 import featureSelection
 import exploreData
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 
 
 
@@ -60,7 +64,7 @@ def get_filter_selection(df_train: pd.DataFrame):
     correlation_matrix = df_train.corr()
     for i in range(len(correlation_matrix.columns)):
         for j in range(i):
-            if abs(correlation_matrix.iloc[i, j]) > 0.8:
+            if abs(correlation_matrix.iloc[i, j]) > 0.9:
                 colname = correlation_matrix.columns[i]
                 correlated_features.add(colname)
   
@@ -74,9 +78,11 @@ def get_filter_selection(df_train: pd.DataFrame):
 
 def get_wrapper_selection(df_train: pd.DataFrame):
     # Wrapper method :
-    model = LogisticRegression()
-    rfe = RFE(model, 16)
+    model = GradientBoostingClassifier(n_estimators=100, random_state=0)
+    rfe = RFE(model, 19)
     fit = rfe.fit(df_train.values[:, 1:], df_train.values[:, 0])
+    print("wrapper score is: ")
+    print(fit.score)
     #print("Num Features: %s" % (fit.n_features_))
     #print("Selected Features: %s" % (fit.support_))
     #print("Feature Ranking: %s" % (fit.ranking_))
@@ -186,6 +192,30 @@ def remove_outliers(threshold: float, df_train: pd.DataFrame, df_validation: pd.
     return df_train, df_validation, df_test
 
 
+def sbs_function(df_train: pd.DataFrame):
+    knn = KNeighborsClassifier(n_neighbors=3)
+    # clf_gradient = GradientBoostingClassifier(n_estimators=100, random_state=0)
+    sbs = SFS(knn,
+              k_features=8,
+              forward=False,  # if forward = True then SFS otherwise SBS
+              floating=False,
+              verbose=2,
+              n_jobs=-1,
+              scoring='accuracy')
+    # after applying sfs fit the data:
+    sbs.fit(df_train.values[:, 1:], df_train.values[:, 0])
+
+    # to get the final set of features
+
+    ret = np.zeros(df_train.shape[1])
+    for index in sbs.k_feature_idx_:
+            ret[index] = 1
+
+    array_bool = np.array(ret, dtype=bool)
+
+    return array_bool
+
+
 def main():
     df = pd.read_csv("ElectionsData.csv")
 
@@ -218,29 +248,33 @@ def main():
     #explore_data(df)
 
     # 4 - Feature Selection
-    # featureSet = get_filter_selection(df_train)
-    # df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    #
+    featureSet = get_filter_selection(df_train)
+    df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
+
     featureSet = get_wrapper_selection(df_train)
     df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
     print("Score for Regression: ")
     print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
+
+    # featureSet = featureSelection.relief(df_train, 2000, 7)
+    # print("the number of the features selection from Relief is: ")
+    # print(featureSet)
     #
-    featureSet = featureSelection.relief(df_train, 1, 1000)
-    df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    print("Score for Relief: ")
-    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
-    #
-    # featureSet = featureSelection.sfs(df_train)
     # df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    # print("Score for SFS: ")
+    # print("Score for Relief: ")
     # print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
 
+    featureSet = sbs_function(df_train)
+    # featureSet = featureSelection.sfs(df_train)
+    df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
+    print("Score for SBS: ")
+    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
 
-    #save_files(df_train, df_test, df_validation)
+    save_files(df_train, df_test, df_validation)
 
     # check accuracy with algorithms
     exploreData.check_accuracy_with_algorithms(df_train, df_validation)
+    print(df_train.columns.values)
 
 
 if __name__ == "__main__":

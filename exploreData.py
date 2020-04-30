@@ -1,3 +1,4 @@
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.naive_bayes import GaussianNB
 from matplotlib.ticker import MaxNLocator
 from sklearn.linear_model import Perceptron
@@ -114,6 +115,12 @@ def check_accuracy_with_algorithms(df_train: pd.DataFrame, df_validation: pd.Dat
 
     # Perceptron
     check_perceptron(df_train, df_validation)
+
+    clf_gradient = GradientBoostingClassifier(n_estimators=100, random_state=0)
+    error_mean, error_std = evaluate_classifier(clf_gradient, df_train, df_validation)
+    print("\nclassification error for GradientBoostingClassifier: {} ({}%)".format(error_mean, error_mean * 100))
+
+
 
 
 def features_histograms(df: pd.DataFrame):

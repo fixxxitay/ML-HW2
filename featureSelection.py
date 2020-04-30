@@ -4,7 +4,22 @@ import sklearn
 from sklearn.model_selection import ShuffleSplit
 
 
-def relief(df: pd.DataFrame, thresh: float, nbIterations: int):
+def Nmaxelements(list1, N):
+    final_list = []
+
+    for i in range(0, N):
+        max1 = 0
+
+        for j in range(len(list1)):
+            if list1[j] > max1:
+                max1 = list1[j];
+
+        list1.remove(max1);
+        final_list.append(max1)
+    return final_list
+
+
+def relief(df: pd.DataFrame, nbIterations: int, n: int):
     X, Y = df.values[:, 1:], df.values[:, 0]
     X = sklearn.preprocessing.MinMaxScaler().fit_transform(X)
 
@@ -27,8 +42,18 @@ def relief(df: pd.DataFrame, thresh: float, nbIterations: int):
         W = W - ((Xi - nearHit) ** 2) + ((Xi - nearMiss) ** 2)
 
     ret = np.zeros(X.shape[1])
-    ret[W > thresh] = 1
+    list_ = W.tolist()
+    highest_list = Nmaxelements(list_, n)
+    print("highest_list is: ")
+    print(highest_list)
 
+    print("W is ")
+    print(W)
+    for i in range(0, X.shape[1]):
+        if W[i] in highest_list:
+            ret[i] = 1
+    print("ret is ")
+    print(ret)
     return ret
 
 

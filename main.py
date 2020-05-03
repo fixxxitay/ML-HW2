@@ -9,9 +9,9 @@ from exploreData import explore_data
 from features import nominal_features, integer_features, float_features, uniform_features, normal_features
 import featureSelection
 import exploreData
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler  
 from mlxtend.feature_selection import SequentialFeatureSelector as SFS
-
+from sklearn.feature_selection import VarianceThreshold
 
 
 def train_test_validation_split(x, test_size, validation_size):
@@ -58,22 +58,14 @@ def save_files(df_train, df_test, df_validation):
 
 
 def get_filter_selection(df_train: pd.DataFrame):
-    # The filter method : correlation factor between features
-    # Remove the highly correlated ones
-    correlated_features = set()
-    correlation_matrix = df_train.corr()
-    for i in range(len(correlation_matrix.columns)):
-        for j in range(i):
-            if abs(correlation_matrix.iloc[i, j]) > 0.9:
-                colname = correlation_matrix.columns[i]
-                correlated_features.add(colname)
-  
-    ret = np.ones(df_train.shape[1]-1)
-    for i in range(len(ret)):
-        if df_train.columns[i+1] in correlated_features:
-            ret[i] = 0
+    var_filter = VarianceThreshold(threshold=0.05)
+   
+    var_filter.fit(df_train.iloc[:, 1:], df_train.iloc[:, 0])
+   
+    ret = np.zeros(df_train.iloc[:, 1:].shape[1])
+    ret[var_filter.get_support(indices=True)] = 1
 
-    return ret
+    return  ret
 
 
 def get_wrapper_selection(df_train: pd.DataFrame):
@@ -158,36 +150,32 @@ def apply_feature_selection(df_train, df_test, df_validation, featureSet):
     return df_train, df_test, df_validation
 
 
-def normalization(df_test: pd.DataFrame, df_train: pd.DataFrame, df_validation: pd.DataFrame):
+def normalize(df_test: pd.DataFrame, df_train: pd.DataFrame, df_validation: pd.DataFrame):
     # min-max for uniform features
-    scale_min_max = MinMaxScaler(feature_range=(-1, 1))
-    df_train[uniform_features] = scale_min_max.fit_transform(df_train[uniform_features])
-    df_validation[uniform_features] = scale_min_max.transform(df_validation[uniform_features])
-    df_test[uniform_features] = scale_min_max.transform(df_test[uniform_features])
+    uniform_scaler = MinMaxScaler(feature_range=(-1, 1))
+    df_train[uniform_features] = uniform_scaler.fit_transform(df_train[uniform_features])
+    df_validation[uniform_features] = uniform_scaler.transform(df_validation[uniform_features])
+    df_test[uniform_features] = uniform_scaler.transform(df_test[uniform_features])
+
     # z-score for normal features
-    scale_std = StandardScaler()
-    df_train[normal_features] = scale_std.fit_transform(df_train[normal_features])
-    df_validation[normal_features] = scale_std.transform(df_validation[normal_features])
-    df_test[normal_features] = scale_std.transform(df_test[normal_features])
+    normal_scaler = StandardScaler()
+    df_train[normal_features] = normal_scaler.fit_transform(df_train[normal_features])
+    df_validation[normal_features] = normal_scaler.transform(df_validation[normal_features])
+    df_test[normal_features] = normal_scaler.transform(df_test[normal_features])
     return df_train, df_test, df_validation
 
 
 def remove_outliers(threshold: float, df_train: pd.DataFrame, df_validation: pd.DataFrame, df_test: pd.DataFrame):
-    std_train = df_train[normal_features].std()
-    mean_train = df_train[normal_features].mean()
+    mean = df_train[normal_features].mean()
+    std = df_train[normal_features].std()
 
-    z_train = (df_train[normal_features] - mean_train) / std_train
-    z_val = (df_validation[normal_features] - mean_train) / std_train
-    z_test = (df_test[normal_features] - mean_train) / std_train
+    z_train = (df_train[normal_features] - mean) / std
+    z_val = (df_validation[normal_features] - mean) / std
+    z_test = (df_test[normal_features] - mean) / std
 
-    z_array = [z_train, z_val, z_test]
-    df_array = [df_train, df_validation, df_test]
-
-    for n_feature in normal_features:
-        for df, z in zip(df_array, z_array):
-            outliers_indexes = z[n_feature].loc[(z[n_feature] > threshold) | (z[n_feature] < -threshold)].index
-            for index in outliers_indexes:
-                df.at[index, n_feature] = np.nan
+    df_train[z_train.mask(abs(z_train) > threshold).isna()] = np.nan
+    df_validation[z_val.mask(abs(z_val) > threshold).isna()] = np.nan
+    df_test[z_test.mask(abs(z_test) > threshold).isna()] = np.nan
 
     return df_train, df_validation, df_test
 
@@ -225,24 +213,24 @@ def main():
     df = nominal_to_numerical_categories(df)
 
     # split the data to train , test and validation
-    df_train, df_test, df_validation = train_test_validation_split(df, 0.2, 0.2)
+    df_train, df_test, df_validation = deterministicSplit(df, 0.6, 0.2) # train_test_validation_split(df, 0.2, 0.2)
 
     # Save the raw data first
-    # save_raw_data(df_test, df_train, df_validation)
+    save_raw_data(df_test, df_train, df_validation)
 
     # 1 - Imputation - Complete missing values
     df_train, df_test, df_validation = complete_missing_values(df_train, df_test, df_validation)
 
     # 2 - Data Cleansing
     # Outlier detection using z score
-    threshold = 3.3
+    threshold = 3#.3
     df_train, df_validation, df_test = remove_outliers(threshold, df_train, df_validation, df_test)
 
     # Remove lines with wrong party (Violets | Khakis)
     df_train, df_test, df_validation = remove_wrong_party_and_na(df_train, df_test, df_validation)
 
     # 3 - Normalization (scaling)
-    df_train, df_test, df_validation = normalization(df_test, df_train, df_validation)
+    df_train, df_test, df_validation = normalize(df_test, df_train, df_validation)
 
     # print some graph about the data
     #explore_data(df)
@@ -251,29 +239,32 @@ def main():
     featureSet = get_filter_selection(df_train)
     df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
 
-    featureSet = get_wrapper_selection(df_train)
-    df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    print("Score for Regression: ")
-    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
+    model = KNeighborsClassifier()
+    featureSet1 = featureSelection.relief(df_train, 2000, 60)
+    #df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet1)
+    #print("Score after Relief: ")
+    #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0],model))
 
-    # featureSet = featureSelection.relief(df_train, 2000, 7)
-    # print("the number of the features selection from Relief is: ")
-    # print(featureSet)
-    #
-    # df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    # print("Score for Relief: ")
-    # print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
+    #featureSet = sbs_function(df_train)
+    model = KNeighborsClassifier()
+    featureSet2 = featureSelection.sfs(df_train, model)
+    #df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet2)
+    #print("Score after SFS: ")
+    #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0],model))
 
-    featureSet = sbs_function(df_train)
-    # featureSet = featureSelection.sfs(df_train)
+
+    model = KNeighborsClassifier()
+    featureSet = featureSet1 + featureSet2
+    featureSet[featureSet > 0] = True
+    featureSet[featureSet <= 0] = False
     df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    print("Score for SBS: ")
-    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0]))
+    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0], model))
+
 
     save_files(df_train, df_test, df_validation)
 
     # check accuracy with algorithms
-    exploreData.check_accuracy_with_algorithms(df_train, df_validation)
+    #exploreData.check_accuracy_with_algorithms(df_train, df_validation)
     print(df_train.columns.values)
 
 

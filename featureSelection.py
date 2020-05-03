@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sklearn
 from sklearn.model_selection import ShuffleSplit
-
+from sklearn.neighbors import KNeighborsClassifier
 
 def Nmaxelements(list1, N):
     final_list = []
@@ -42,28 +42,31 @@ def relief(df: pd.DataFrame, nbIterations: int, n: int):
         W = W - ((Xi - nearHit) ** 2) + ((Xi - nearMiss) ** 2)
 
     ret = np.zeros(X.shape[1])
-    list_ = W.tolist()
-    highest_list = Nmaxelements(list_, n)
-    print("highest_list is: ")
-    print(highest_list)
 
-    print("W is ")
-    print(W)
-    for i in range(0, X.shape[1]):
-        if W[i] in highest_list:
-            ret[i] = 1
-    print("ret is ")
-    print(ret)
+    ret = np.zeros(X.shape[1])
+    ret[W > n] = 1
+
+    #list_ = W.tolist()
+    #highest_list = Nmaxelements(list_, n)
+    #print("highest_list is: ")
+    #print(highest_list)
+
+    #print("W is ")
+    #print(W)
+    #for i in range(0, X.shape[1]):
+    #    if W[i] in highest_list:
+    #        ret[i] = 1
+    #print("ret is ")
+    #print(ret)
     return ret
 
 
-def getScore(X, Y):
-    knnModel = sklearn.neighbors.KNeighborsClassifier()
-    cv = ShuffleSplit()
-    return sklearn.model_selection.cross_val_score(knnModel, X, Y, scoring='accuracy', cv=cv).mean()
+def getScore(X, Y, model):
+    #cv = ShuffleSplit()
+    return sklearn.model_selection.cross_val_score(model, X, Y, scoring='accuracy').mean()#, cv=cv).mean()
 
 
-def sfs(df: pd.DataFrame):
+def sfs(df: pd.DataFrame, model):
     X, Y = df.iloc[:, 1:], df.iloc[:, 0]
     globalBestScore = np.NINF
     selectedFeatures = list()
@@ -73,7 +76,7 @@ def sfs(df: pd.DataFrame):
         bestScore = np.NINF
         bestFeature = None
         for feature in remainingFeatures:
-            score = getScore(X[selectedFeatures + [feature]], Y)
+            score = getScore(X[selectedFeatures + [feature]], Y, model)
 
             if score > bestScore:
                 bestScore = score

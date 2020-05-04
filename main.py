@@ -1,17 +1,18 @@
 ﻿import pandas as pd
 import numpy as np
+
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import SGDClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
-from exploreData import explore_data
+from sklearn.feature_selection import RFE
+from sklearn.feature_selection import VarianceThreshold
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS
+from sklearn.preprocessing import StandardScaler, MinMaxScaler  
+
 from features import nominal_features, integer_features, float_features, uniform_features, normal_features
 import featureSelection
 import exploreData
-from sklearn.preprocessing import StandardScaler, MinMaxScaler  
-from mlxtend.feature_selection import SequentialFeatureSelector as SFS
-from sklearn.feature_selection import VarianceThreshold
 
 
 def train_test_validation_split(x, test_size, validation_size):
@@ -45,8 +46,8 @@ def train_test_validation_split(x, test_size, validation_size):
 
 def deterministicSplit(df, train, test):
     df_train = df.iloc[0:round(len(df) * train), :]
-    df_test = df.iloc[round(len(df) * train):round(len(df) * (train+test)), :]
-    df_validation = df.iloc[round(len(df) * (train+test)):len(df), :]
+    df_test = df.iloc[round(len(df) * train):round(len(df) * (train + test)), :]
+    df_validation = df.iloc[round(len(df) * (train + test)):len(df), :]
 
     return df_train, df_test, df_validation
 
@@ -104,8 +105,7 @@ def save_raw_data(df_test, df_train, df_validation):
     df_validation.to_csv('raw_validation.csv', index=False)
 
 
-def complete_missing_values(df_train: pd.DataFrame, df_test: pd.DataFrame, df_validation: pd.DataFrame)\
-                                                                -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
+def complete_missing_values(df_train: pd.DataFrame, df_test: pd.DataFrame, df_validation: pd.DataFrame) -> (pd.DataFrame, pd.DataFrame, pd.DataFrame):
     df_train = df_train[df_train > 0]
     df_test = df_test[df_test > 0]
     df_validation = df_validation[df_validation > 0]
@@ -143,9 +143,9 @@ def nominal_to_numerical_categories(df: pd.DataFrame):
 def apply_feature_selection(df_train, df_test, df_validation, featureSet):
     arrayBool = np.array([True], dtype=bool)
     arrayBool = np.append(arrayBool, featureSet)
-    df_train = df_train.iloc[:, arrayBool==True]
-    df_test = df_test.iloc[:, arrayBool==True]
-    df_validation = df_validation.iloc[:, arrayBool==True]
+    df_train = df_train.iloc[:, arrayBool == True]
+    df_test = df_test.iloc[:, arrayBool == True]
+    df_validation = df_validation.iloc[:, arrayBool == True]
     
     return df_train, df_test, df_validation
 
@@ -182,7 +182,8 @@ def remove_outliers(threshold: float, df_train: pd.DataFrame, df_validation: pd.
 
 def sbs_function(df_train: pd.DataFrame):
     knn = KNeighborsClassifier(n_neighbors=3)
-    # clf_gradient = GradientBoostingClassifier(n_estimators=100, random_state=0)
+    # clf_gradient = GradientBoostingClassifier(n_estimators=100,
+    # random_state=0)
     sbs = SFS(knn,
               k_features=8,
               forward=False,  # if forward = True then SFS otherwise SBS
@@ -239,31 +240,27 @@ def main():
     featureSet = get_filter_selection(df_train)
     df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
 
-    model = KNeighborsClassifier()
     featureSet1 = featureSelection.relief(df_train, 2000, 60)
-    #df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet1)
-    #print("Score after Relief: ")
-    #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0],model))
-
-    #featureSet = sbs_function(df_train)
+    
+    #model = SGDClassifier()
+    #featureSet2 = featureSelection.sfs(df_train, model)
+    
     model = KNeighborsClassifier()
     featureSet2 = featureSelection.sfs(df_train, model)
-    #df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet2)
-    #print("Score after SFS: ")
-    #print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0],model))
 
 
-    model = KNeighborsClassifier()
     featureSet = featureSet1 + featureSet2
     featureSet[featureSet > 0] = True
     featureSet[featureSet <= 0] = False
     df_train, df_test, df_validation = apply_feature_selection(df_train, df_test, df_validation, featureSet)
-    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0], model))
-
+    print("KNN score: ")
+    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0], KNeighborsClassifier()))
+    print("SGD score: ")
+    print(featureSelection.getScore(df_test.iloc[:, 1:], df_test.iloc[:, 0], SGDClassifier()))
 
     save_files(df_train, df_test, df_validation)
 
-    # check accuracy with algorithms
+    
     #exploreData.check_accuracy_with_algorithms(df_train, df_validation)
     print(df_train.columns.values)
 

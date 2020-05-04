@@ -46,18 +46,6 @@ def relief(df: pd.DataFrame, nbIterations: int, n: int):
     ret = np.zeros(X.shape[1])
     ret[W > n] = 1
 
-    #list_ = W.tolist()
-    #highest_list = Nmaxelements(list_, n)
-    #print("highest_list is: ")
-    #print(highest_list)
-
-    #print("W is ")
-    #print(W)
-    #for i in range(0, X.shape[1]):
-    #    if W[i] in highest_list:
-    #        ret[i] = 1
-    #print("ret is ")
-    #print(ret)
     return ret
 
 
